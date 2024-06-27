@@ -1,0 +1,90 @@
+export const VNFlag = ({ width = "640px", height = "480px" }) => {
+  return (
+    <svg
+      version="1.1"
+      id="Layer_1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      x="0px"
+      y="0px"
+      viewBox="0 0 1351.9 800"
+      xmlSpace="preserve"
+      width={width}
+      height={height}
+    >
+      <style
+        type="text/css"
+        dangerouslySetInnerHTML={{
+          __html:
+            "\n\t.st0{clip-path:url(#SVGID_00000109714011852773158700000000817207227163025317_);}\n\t.st1{fill:#FFFFFF;}\n\t.st2{fill:#FFFFFF;filter:url(#Adobe_OpacityMaskFilter);}\n\t.st3{mask:url(#mask0_503_2795_00000144299675885218635930000003863114277006512811_);}\n\t.st4{fill:#EA403F;}\n\t.st5{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFE4E;}\n",
+        }}
+      />
+      <g>
+        <defs>
+          <path
+            id="SVGID_1_"
+            d="M55.8-106.7h1240.4c57.1,0,103.4,46.3,103.4,103.4v826.9c0,57.1-46.3,103.4-103.4,103.4H55.8
+        c-57.1,0-103.4-46.3-103.4-103.4V-3.4C-47.6-60.5-1.3-106.7,55.8-106.7z"
+          />
+        </defs>
+        <clipPath id="SVGID_00000000917715140560353240000009175865660878495664_">
+          <use xlinkHref="#SVGID_1_" style={{ overflow: "visible" }} />
+        </clipPath>
+        <g
+          style={{
+            clipPath:
+              "url(#SVGID_00000000917715140560353240000009175865660878495664_)",
+          }}
+        >
+          <path
+            className="st1"
+            d="M55.8-106.7h1240.4c57.1,0,103.4,46.3,103.4,103.4v826.9c0,57.1-46.3,103.4-103.4,103.4H55.8
+        c-57.1,0-103.4-46.3-103.4-103.4V-3.4C-47.6-60.5-1.3-106.7,55.8-106.7z"
+          />
+          <defs>
+            <filter
+              id="Adobe_OpacityMaskFilter"
+              filterUnits="userSpaceOnUse"
+              x="-47.6"
+              y="-106.7"
+              width="1447.1"
+              height="1033.6"
+            >
+              <feColorMatrix
+                type="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+              />
+            </filter>
+          </defs>
+          <mask
+            maskUnits="userSpaceOnUse"
+            x="-47.6"
+            y="-106.7"
+            width="1447.1"
+            height="1033.6"
+            id="mask0_503_2795_00000144299675885218635930000003863114277006512811_"
+          >
+            <path
+              className="st2"
+              d="M55.8-106.7h1240.4c57.1,0,103.4,46.3,103.4,103.4v826.9c0,57.1-46.3,103.4-103.4,103.4H55.8
+          c-57.1,0-103.4-46.3-103.4-103.4V-3.4C-47.6-60.5-1.3-106.7,55.8-106.7z"
+            />
+          </mask>
+          <g className="st3">
+            <rect
+              x="-47.6"
+              y="-106.7"
+              className="st4"
+              width="1447.1"
+              height="1033.6"
+            />
+            <path
+              className="st5"
+              d="M676,531L493.7,661l67.2-213.5L381,314.3l223.8-2L676,100L747,312.3l223.8,2L791,447.5L858.2,661L676,531z"
+            />
+          </g>
+        </g>
+      </g>
+    </svg>
+  );
+};

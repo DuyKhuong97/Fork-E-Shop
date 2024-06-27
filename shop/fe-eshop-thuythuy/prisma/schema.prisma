@@ -1,0 +1,403 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+///================User===============
+model Users {
+  id                Int                 @id @default(autoincrement())
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  username          String              @unique
+  password          String
+  last_name         String?
+  first_name        String?
+  gender            String?
+  email             String?
+  birthday          DateTime?
+  avatar            String?
+  code              String?
+  job_title         String?
+  department        String?
+  manager_id        Int?
+  phone             String?
+  address1          String?
+  address2          String?
+  city              String?
+  state             String?
+  postal_code       String?
+  country           String?
+  remember_token    String?
+  active_code       String?
+  status            Int?
+  userHasPermission UserHasPermission[]
+  userHasRole       UserHasRole[]
+  ShopImport        ShopImports[]
+  ShopExports       ShopExports[]
+  ShopOrders        ShopOrders[]
+
+  @@map("acl_users")
+}
+
+model Permissions {
+  id                Int                 @id @default(autoincrement())
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  name              String              @unique
+  guard_name        String
+  display_name      String?
+  userHasPermission UserHasPermission[]
+  roleHasPermission RoleHasPermission[]
+
+  @@map("acl_permissions") // name table in database sql
+}
+
+model Roles {
+  id                Int                 @id @default(autoincrement())
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  name              String              @unique
+  guard_name        String
+  display_name      String?
+  userHasRole       UserHasRole[]
+  roleHasPermission RoleHasPermission[]
+
+  @@map("acl_roles") // name table in database sql
+}
+
+model UserHasPermission {
+  id             Int         @id @default(autoincrement())
+  user_id        Int
+  permissions_id Int
+  permission     Permissions @relation(fields: [permissions_id], references: [id])
+  user           Users       @relation(fields: [user_id], references: [id])
+
+  @@map("acl_user_has_permissions") // name table in database sql
+}
+
+model UserHasRole {
+  id      Int   @id @default(autoincrement())
+  user_id Int
+  role_id Int
+  role    Roles @relation(fields: [role_id], references: [id])
+  user    Users @relation(fields: [user_id], references: [id])
+
+  @@map("acl_user_has_roles")
+}
+
+model RoleHasPermission {
+  id             Int         @id @default(autoincrement())
+  role_id        Int
+  permissions_id Int
+  permission     Permissions @relation(fields: [permissions_id], references: [id])
+  role           Roles       @relation(fields: [role_id], references: [id])
+
+  @@map("acl_role_has_permissions")
+}
+
+///================ Store ===============
+
+model ShopStores {
+  id          Int           @id @default(autoincrement())
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  store_code  Int           @unique
+  store_name  String
+  description String?
+  image       String?
+  ShopImport  ShopImports[]
+  ShopExports ShopExports[]
+
+  @@map("shop_stores")
+}
+
+model ShopImports {
+  id                Int                 @id @default(autoincrement())
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  shop_stores_id    Int
+  employee_id       Int
+  import_date       DateTime
+  employee          Users               @relation(fields: [employee_id], references: [id])
+  shopStores        ShopStores          @relation(fields: [shop_stores_id], references: [id])
+  ShopImportDetails ShopImportDetails[]
+  ShopExportDetails ShopExportDetails[]
+
+  @@map("shop_imports")
+}
+
+model ShopExports {
+  id          Int        @id @default(autoincrement())
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  store_id    Int
+  employee_id Int
+  export_date DateTime
+  stores      ShopStores @relation(fields: [store_id], references: [id])
+  employee    Users      @relation(fields: [employee_id], references: [id])
+
+  @@map("shop_exports")
+}
+
+model ShopImportDetails {
+  id         Int          @id @default(autoincrement())
+  import_id  Int
+  product_id Int
+  quantiny   Decimal
+  unit_price Decimal
+  import     ShopImports  @relation(fields: [import_id], references: [id])
+  product    ShopProducts @relation(fields: [product_id], references: [id])
+
+  @@map("shop_import_details")
+}
+
+model ShopExportDetails {
+  id         Int          @id @default(autoincrement())
+  export_id  Int
+  product_id Int
+  quantiny   Decimal
+  unit_price Decimal
+  import     ShopImports  @relation(fields: [export_id], references: [id])
+  product    ShopProducts @relation(fields: [product_id], references: [id])
+
+  @@map("shop_exports_details")
+}
+
+///================ Product ===============
+model ShopProducts {
+  id                   Int                    @id @default(autoincrement())
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  product_code         Int                    @unique
+  product_name         String
+  slug                 String
+  image                String?
+  short_description    String?
+  description          String?
+  standard_cost        Float?
+  list_price           Float
+  quantity_per_unit    Float?
+  discontinued         Int?
+  is_featured          Boolean?
+  is_new               Boolean?
+  categories_id        Int
+  supplier_id          Int
+  ShopSupplier         ShopSuppliers          @relation(fields: [supplier_id], references: [id])
+  ShopCategories       ShopCategories         @relation(fields: [categories_id], references: [id])
+  ShopProductReviews   ShopProductReviews[]
+  ShopImportDetails    ShopImportDetails[]
+  ShopExportDetails    ShopExportDetails[]
+  ShopProductImages    ShopProductImages[]
+  ShopProductDiscounts ShopProductDiscounts[]
+  ShopOrderDetails     ShopOrderDetails[]
+  ShopProductVouchers  ShopProductVouchers[]
+
+  @@map("shop_products")
+}
+
+model ShopCategories {
+  id            Int            @id @default(autoincrement())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  category_code Int            @unique @default(autoincrement())
+  category_name String         @unique
+  slug          String
+  description   String?
+  image         String?
+  ShopProducts  ShopProducts[]
+
+  @@map("shop_categories")
+}
+
+model ShopSuppliers {
+  id            Int            @id @default(autoincrement())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  suppier_code  Int            @unique @default(autoincrement())
+  supplier_name String         @unique
+  description   String?
+  image         String?
+  ShopProducts  ShopProducts[]
+
+  @@map("shop_suppliers")
+}
+
+model ShopProductReviews {
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  product_id  Int
+  customer_id Int
+  rating      Float
+  comment     String
+  product     ShopProducts  @relation(fields: [product_id], references: [id])
+  customer    ShopCustomers @relation(fields: [customer_id], references: [id])
+
+  @@map("shop_product_reviews")
+}
+
+model ShopProductImages {
+  id         Int          @id @default(autoincrement())
+  product_id Int
+  image      String
+  product    ShopProducts @relation(fields: [product_id], references: [id])
+
+  @@map("shop_product_images")
+}
+
+model ShopProductDiscounts {
+  id              Int          @id @default(autoincrement())
+  product_id      Int
+  discount_name   String
+  discount_amount Decimal
+  is_fixed        Boolean
+  start_date      DateTime
+  end_date        DateTime
+  product         ShopProducts @relation(fields: [product_id], references: [id])
+
+  @@map("shop_product_discounts")
+}
+
+///================ Order ===============
+
+model ShopOrders {
+  id               Int                @id @default(autoincrement())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  employee_id      Int
+  customer_id      Int
+  order_date       DateTime
+  shipped_date     DateTime
+  ship_name        String?
+  ship_address1    String
+  ship_address2    String?
+  ship_city        String
+  ship_state       String
+  ship_postal_code String
+  ship_country     String
+  shipping_fee     Decimal
+  payment_type_id  Int
+  paid_date        DateTime
+  order_status     String
+  ShopOrderDetails ShopOrderDetails[]
+  employee         Users              @relation(fields: [employee_id], references: [id])
+  customer         ShopCustomers      @relation(fields: [customer_id], references: [id])
+  payment          ShopPaymentTypes   @relation(fields: [payment_type_id], references: [id])
+
+  @@map("shop_orders")
+}
+
+model ShopPaymentTypes {
+  id           Int          @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  payment_code Int
+  payment_name String
+  description  String?
+  image        String?
+  ShopOrders   ShopOrders[]
+
+  @@map("shop_payment_types")
+}
+
+model ShopCustomers {
+  id                   Int                    @id @default(autoincrement())
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  username             String
+  password             String
+  last_name            String
+  first_name           String
+  gender               String
+  email                String                 @unique
+  birthday             DateTime?
+  avatar               String?
+  code                 String?
+  company              String?
+  phone                String?
+  billing_address      String?
+  shipping_address     String?
+  city                 String?
+  state                String?
+  postal_code          String
+  country              String?
+  remember_token       String?
+  activate_code        String?
+  status               String?
+  ShopOrders           ShopOrders[]
+  ShopCustomerVouchers ShopCustomerVouchers[]
+  ShopProductReviews   ShopProductReviews[]
+
+  @@map("shop_customers")
+}
+
+model ShopOrderDetails {
+  id                  Int          @id @default(autoincrement())
+  order_id            Int
+  product_id          Int
+  quantity            Decimal
+  unit_price          Decimal
+  discount_percentage Float
+  discount_amount     Decimal
+  order_detail_status String?
+  date_allocated      DateTime?
+  product             ShopProducts @relation(fields: [product_id], references: [id])
+  order               ShopOrders   @relation(fields: [order_id], references: [id])
+
+  @@map("shop_order_details")
+}
+
+///================ sale ===============
+model ShopVouchers {
+  id                   Int                    @id @default(autoincrement())
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  deleteAt             DateTime
+  voucher_code         String
+  voucher_name         String
+  description          String
+  uses                 Int
+  max_uses             Int
+  max_uses_user        Int
+  type                 String
+  discount_amount      Decimal
+  is_fixed             Boolean
+  start_date           DateTime
+  end_date             DateTime
+  is_deleted           Boolean
+  ShopCustomerVouchers ShopCustomerVouchers[]
+  ShopProductVouchers  ShopProductVouchers[]
+
+  @@map("shop_vouchers")
+}
+
+model ShopCustomerVouchers {
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  customer_id Int
+  voucher_id  Int
+  customer    ShopCustomers @relation(fields: [customer_id], references: [id])
+  voucher     ShopVouchers  @relation(fields: [voucher_id], references: [id])
+
+  @@map("shop_customer_vouchers")
+}
+
+model ShopProductVouchers {
+  id         Int          @id @default(autoincrement())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  product_id Int
+  voucher_id Int
+  product    ShopProducts @relation(fields: [product_id], references: [id])
+  voucher    ShopVouchers @relation(fields: [voucher_id], references: [id])
+
+  @@map("shop_product_vouchers")
+}
